@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #1a1b1f;
+        }
+
+        .banner {
+            background-color: #000;
+            width: 100%;
+            height: 50px;
+        }
+
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+
+        }
+
+        .login-form {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-form input {
+            background-color: #292c32;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .login-form button {
+            background-color: #5a5af3;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .login-form button:hover {
+            background-color: #4a4ae3;
+        }
+
+        .logo {
+            transform: scale(0.5);
+            /* 缩小为原来的一半 */
+            display: block;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div class="banner"></div>
+    <div class="login-section">
+        <img src="./logo.png" alt="ACE Studio Logo" class="logo">
+        <form class="login-form">
+            <input type="email" placeholder="邮箱地址" required>
+            <input type="password" placeholder="密码" required>
+            <button type="submit">登录</button>
+        </form>
+    </div>
+</body>
+<script>
+    document.querySelector('.login-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        const email = this.querySelector('input[type="email"]').value;
+        const password = this.querySelector('input[type="password"]').value;
+
+        fetch('https://as-api.tdacestudio.com/api/as/web/auth/email/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                "platform": "web",
+                "device": "web",
+                "version": "web",
+                "channel": "genera"
+            },
+            body: JSON.stringify({
+                "email": email,
+                "password": password
+            })
+        })
+            .then(response => response.json()) // 解析JSON响应
+            .then(data => {
+            if (data.code === 200) {
+                window.location.href = "acestudio://web_launch?web_token=" + data.data.auth.token;
+            }else{
+                alert(data.error);
+            }
+
+            })
+            .catch(error => {
+                // 错误处理
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+</html>
